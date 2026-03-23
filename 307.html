@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio de Lógica: 10 Sentenças</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #game-container { background: #161b22; padding: 40px; border-radius: 15px; border: 1px solid #30363d; text-align: center; width: 350px; position: relative; }
+        .progress { font-size: 0.9rem; color: #8b949e; margin-bottom: 10px; }
+        .equation { font-size: 2.5rem; margin: 20px 0; color: #58a6ff; font-weight: bold; }
+        .buttons { display: flex; flex-direction: column; gap: 10px; }
+        button { padding: 15px; font-size: 1rem; cursor: pointer; border: none; border-radius: 6px; font-weight: 600; transition: 0.2s; }
+        .btn-true { background-color: #238636; color: white; }
+        .btn-false { background-color: #da3633; color: white; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        /* Estilo do Modal */
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 10; }
+        .modal-content { background: #21262d; padding: 30px; border-radius: 10px; text-align: center; border: 2px solid #58a6ff; width: 300px; }
+        .modal-content h2 { color: #58a6ff; }
+        .btn-restart { background: #58a6ff; color: #ffffff; margin-top: 20px; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div class="progress" id="progress">Questão: 1/10</div>
+    <div class="equation" id="equation">--</div>
+    <div class="buttons">
+        <button class="btn-true" onclick="check(true)">VERDADEIRO</button>
+        <button class="btn-false" onclick="check(false)">FALSO</button>
+    </div>
+</div>
+
+<div id="modal">
+    <div class="modal-content">
+        <h2>Processamento Concluído</h2>
+        <p id="final-score">Sua nota: 0/10</p>
+        <p id="message"></p>
+        <button class="btn-restart" onclick="resetGame()">Reiniciar Sistema</button>
+    </div>
+</div>
+
+<script>
+    let score = 0;
+    let currentStep = 1;
+    let currentAnswer = true;
+    const totalSteps = 10;
+
+    function generateEquation() {
+        if (currentStep > totalSteps) {
+            showModal();
+            return;
+        }
+
+        document.getElementById('progress').innerText = `Questão: ${currentStep}/${totalSteps}`;
+        
+        const a = Math.floor(Math.random() * 15) + 1;
+        const b = Math.floor(Math.random() * 15) + 1;
+        const isSum = Math.random() > 0.5;
+        const op = isSum ? '+' : '-';
+        
+        let correctResult = isSum ? a + b : a - b;
+        
+        // Decide se mostra a verdade ou uma mentira
+        currentAnswer = Math.random() > 0.5;
+        let displayResult = currentAnswer ? correctResult : (correctResult + (Math.random() > 0.5 ? 2 : -2));
+
+        document.getElementById('equation').innerText = `${a} ${op} ${b} = ${displayResult}`;
+    }
+
+    function check(userChoice) {
+        if (userChoice === currentAnswer) {
+            score++;
+        }
+        currentStep++;
+        generateEquation();
+    }
+
+    function showModal() {
+        document.getElementById('modal').style.display = 'flex';
+        document.getElementById('final-score').innerText = `Nota Final: ${score} de ${totalSteps}`;
+        
+        let msg = "";
+        if (score === 10) msg = "Lógica Perfeita! 🤖";
+        else if (score >= 7) msg = "Bom processamento! ⚡";
+        else msg = "Necessita de depuração (debug). 🛠️";
+        
+        document.getElementById('message').innerText = msg;
+    }
+
+    function resetGame() {
+        score = 0;
+        currentStep = 1;
+        document.getElementById('modal').style.display = 'none';
+        generateEquation();
+    }
+
+    // Início imediato
+    generateEquation();
+</script>
+
+</body>
+</html>
